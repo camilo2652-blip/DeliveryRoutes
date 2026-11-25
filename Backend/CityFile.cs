@@ -33,6 +33,62 @@ public static class CityFile
             {
                 throw new FormatException($"Line {lineNumber}: expected 4 fields (from,to,distance_in_meters,direction).");
             }
+            string from = parts[0].Trim();
+            string to = parts[1].Trim();
+            string distanceText = parts[2].Trim();
+            string directionText = parts[3].Trim();
 
+            if (string.IsNullOrEmpty(from) || string.IsNullOrEmpty(to))
+            {
+                throw new FormatException($"Line {lineNumber}: 'from' and 'to' locations cannot be empty.");
+            }
+
+            if (string.Equals(from, to, StringComparison.Ordinal))
+            {
+                throw new FormatException($"Line {lineNumber}: self-loop street from '{from}' to '{to}' is not allowed.");
+            }
+
+            if (!double.TryParse(distanceText, NumberStyles.Float, CultureInfo.InvariantCulture, out double distance) ||
+                double.IsNaN(distance) || double.IsInfinity(distance) || distance <= 0)
+            {
+                throw new FormatException($"Line {lineNumber}: distance '{distanceText}' must be a positive number greater than 0.");
+            }
+
+            bool isTwoWay;
+            if (string.Equals(directionText, "TwoWay", StringComparison.OrdinalIgnoreCase))
+            {
+                isTwoWay = true;
+            }
+            else if (string.Equals(directionText, "OneWay", StringComparison.OrdinalIgnoreCase))
+            {
+                isTwoWay = false;
+            }
+            else
+            {
+                throw new FormatException($"Line {lineNumber}: invalid direction '{directionText}'. Expected TwoWay or OneWay.");
+            }
+
+            string canonicalStreetKey = GetCanonicalStreetKey(from, to);
+            if (!seenStreets.Add(canonicalStreetKey))
+            {
+                throw new InvalidOperationException($"Line {lineNumber}: duplicate street between '{from}' and '{to}'.");
+            }
+
+            graph.AddEdge(from, to, distance);
+            if (isTwoWay)
+            {
+                graph.AddEdge(to, from, distance);
+            }
         }
+
+        return graph;
+    }
+
+    private static string GetCanonicalStreetKey(string a, string b)
+    {
+        return string.Compare(a, b, StringComparison.Ordinal) <= 0
+            ? $"{a}\u001F{b}"
+            : $"{b}\u001F{a}";
+    }
+
 }
