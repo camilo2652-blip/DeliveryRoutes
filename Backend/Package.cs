@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace DeliveryRoutes.Backend;
 
-namespace Backend
-{
-    internal class Package
-    {
-    }
-}
+/// <summary>
+/// Represents a package with its pickup and delivery locations.
+/// </summary>
+public readonly record struct Package(int Id, string Pickup, string Delivery);
