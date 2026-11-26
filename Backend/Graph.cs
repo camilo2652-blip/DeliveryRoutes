@@ -1,4 +1,4 @@
-﻿namespace DeliveryRoutes.Backend;
+﻿namespace Backend;
 
 /// <summary>
 /// Weighted graph backed by adjacency lists.

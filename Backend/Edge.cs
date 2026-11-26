@@ -1,4 +1,4 @@
-﻿namespace DeliveryRoutes.Backend;
+﻿namespace Backend;
 
 /// <summary>
 /// Represents a weighted directed edge to a neighboring vertex.

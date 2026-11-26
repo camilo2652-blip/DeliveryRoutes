@@ -1,4 +1,4 @@
-﻿namespace DeliveryRoutes.Backend;
+﻿namespace Backend;
 
 /// <summary>
 /// Represents a package with its pickup and delivery locations.

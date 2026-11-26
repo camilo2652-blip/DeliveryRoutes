@@ -1,4 +1,4 @@
-﻿namespace DeliveryRoutes.Backend;
+﻿namespace Backend;
 
 /// <summary>
 /// Type of task performed at a stop.

@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Frontend
-{
-    class packages_mini
-    {
-    }
-}
+﻿C,Pickup,1
+G,Delivery,1
+E,Pickup,2
+D,Delivery,2
+G,Pickup,3
+A,Delivery,3
