@@ -1,53 +1,39 @@
+DeliveryRoutes — Solution to the Pickup and Delivery Problem (PDP)
+A C# (.NET) console application structured into two projects:
 
-# DeliveryRoutes — Solución al Pickup and Delivery Problem (PDP)
+Backend: class library containing graph logic, shortest paths (Dijkstra), file loading (city and packages), route planning, and output formatting.
 
-Aplicación de consola en C# (.NET) estructurada en dos proyectos:
-- **`Backend`**: biblioteca de clases con la lógica de grafos, rutas más cortas (Dijkstra), carga de archivos (`city` y `packages`),
- planificación de rutas y formato de salida.
-- **`Frontend`**: aplicación de consola (`DeliveryRoutes.csproj`) que recibe los argumentos o solicita datos de forma interactiva 
-y muestra el itinerario final.
+Frontend: console application (DeliveryRoutes.csproj) that takes command-line arguments or prompts for input interactively and displays the final itinerary.
 
----
+How to Build and Run the Program
+From the root directory of the repository (DeliveryRoutes), first build the solution with:
 
-## Cómo compilar y ejecutar el programa
-
-Desde la carpeta raíz del repositorio (`DeliveryRoutes`), primero compila la solución con:
-
-```bash
+Bash
 dotnet build
-Luego puedes ejecutar el programa de las siguientes maneras:
+Then you can run the program in the following ways:
 
-Caso completo (desde la raíz indicando la ruta de los archivos):
+Full case (from the root directory, specifying the file paths):
 
 Bash
 dotnet run -c Release --project Frontend/DeliveryRoutes.csproj -- Frontend/city.txt Frontend/packages.txt D
-Ejemplo pequeño de prueba:
+Small test example:
 
 Bash
-dotnet run -c Release --project Frontend/DeliveryRoutes.csproj -- Frontend/city_mini.txt Frontend/packages_mini.txt A
-Modo interactivo (sin argumentos, pide los datos por consola):
+dotnet run -c Release --project Frontend\DeliveryRoutes.csproj -- Frontend\city_mini.txt Frontend\packages_mini.txt A
+Interactive mode (without arguments, prompts for input in the console):
 
 Bash
 dotnet run -c Release --project Frontend/DeliveryRoutes.csproj
-Nota: Si los archivos .txt están en el directorio de trabajo actual, puedes pasar directamente sus nombres (city.txt packages.txt D).
+Note: If the .txt files are in the current working directory, you can pass their filenames directly (city.txt packages.txt D).
 
-Estrategia para ordenar las paradas
-Para armar el recorrido sin que el repartidor pierda distancia innecesaria ni rompa la regla de recoger un paquete antes de entregarlo, 
-el planificador combina el cálculo de distancias reales sobre el grafo (usando Dijkstra para respetar calles de un solo sentido y 
-caminos mínimos) con una heurística de inserción y búsqueda local (reordenamiento / rerouting):
+Stop-Ordering Strategy
+To build the route without wasting distance or breaking the rule of picking up a package before delivering it, the planner combines real distance calculations over the graph (using Dijkstra's algorithm to respect one-way streets and shortest paths) with an insertion heuristic and local search (reordering / rerouting):
 
-Cálculo de rutas más cortas: en lugar de medir distancia en línea recta, se obtiene la distancia mínima y el camino nodo a nodo entre 
-ubicaciones utilizando Dijkstra sobre el grafo de la ciudad.
+Shortest-path calculation: Instead of measuring straight-line distance, it computes the minimum distance and node-by-node path between locations using Dijkstra's algorithm over the city graph.
 
-Construcción inicial por inserción: se van incorporando los pares de recogida y entrega evaluando en qué posición de la ruta actual 
-generan el menor incremento de distancia, respetando siempre que la recogida de cada paquete ocurra antes que su entrega 
-(y agrupando acciones cuando coinciden en la misma parada).
+Initial construction by insertion: Pickup and delivery pairs are added one by one by evaluating which position in the current route produces the smallest distance increase, always respecting that each package's pickup occurs before its delivery (and grouping actions when they share the same stop).
 
-Mejora mediante búsqueda local (rerouting): una vez construida una ruta inicial válida, se aplican ajustes locales 
-(como reubicar o reordenar paradas dentro de las restricciones de precedencia) para reducir el recorrido total cuando el intercambio mejora la distancia.
+Improvement via local search (rerouting): Once a valid initial route is built, local adjustments (such as relocating or reordering stops within precedence constraints) are applied to reduce the total route distance whenever a swap improves it.
 
-¿Por qué no se prueban todas las combinaciones?
-Porque el número de posibles órdenes de visitas crece de forma combinatoria / factorial a medida que aumentan los paquetes 
-y las paradas. Incluso filtrando solo las secuencias válidas donde cada recogida va antes que su entrega, probar todas las 
-permutaciones posibles en un conjunto de tamaño moderado o grande se vuelve inviable en tiempo de cómputo (explosión combinatoria). 
-Por eso es más práctico construir una buena solución con heurística de inserción y refinarla con búsqueda local en un tiempo razonable.
+Why Not Try All Combinations?
+Because the number of possible visit orders grows combinatorially / factorially as the number of packages and stops increases. Even after filtering only valid sequences where each pickup comes before its delivery, testing all possible permutations on a moderate or large set becomes computationally infeasible (combinatorial explosion). That is why building a strong solution with an insertion heuristic and refining it with local search is more practical within a reasonable runtime.

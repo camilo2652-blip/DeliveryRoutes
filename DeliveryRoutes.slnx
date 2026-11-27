@@ -1,4 +1,4 @@
 <Solution>
   <Project Path="Backend/Backend.csproj" />
-  <Project Path="Frontend/Frontend.csproj" />
+  <Project Path="Frontend/DeliveryRoutes.csproj" />
 </Solution>
